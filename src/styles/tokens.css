@@ -1,0 +1,46 @@
+/*
+ * デザイン仕様（Design/DesignSpec）のガイドラインから抜き出した値。
+ * 色・文字・余白はここだけで定義し、各コンポーネントは変数を参照する。
+ */
+:root {
+  /* カラー */
+  --color-brand: #4cb3f8;
+  --color-brand-strong: #32a8f8;
+  --color-text: #333333;
+  --color-text-light: #808080;
+  --color-text-logo: #1a1a1a;
+  --color-gray: #b3b3b3;
+  --color-white: #ffffff;
+  --color-bg-light: #f5f8fa;
+  --color-bg-sidebar-footer: #f6f8fa;
+  --color-bg-dark: #c8e6fa;
+  --color-danger: #e5484d;
+  --color-overlay: rgb(0 0 0 / 40%);
+
+  /* 文字 */
+  --font-family: 'Noto Sans JP', sans-serif;
+  --font-size-title: 24px;
+  --font-size-body: 16px;
+  --font-size-caption: 12px;
+  --font-size-minimum: 10px;
+
+  /* 余白 */
+  --space-xs: 10px;
+  --space-sm: 20px;
+  --space-md: 30px;
+  --space-lg: 40px;
+
+  /* 角丸 */
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 16px;
+
+  /* レイアウト */
+  --sidebar-width: 280px;
+  --footer-height: 60px;
+  --actions-width: 90px;
+  --control-height: 40px;
+  --menu-item-height: 44px;
+}
+
+/* メディアクエリでは CSS 変数を使えないため、ブレイクポイントは各ファイルで 768px に統一する */
