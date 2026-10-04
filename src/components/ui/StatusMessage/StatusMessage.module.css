@@ -1,0 +1,9 @@
+.message {
+  padding: var(--space-sm);
+  color: var(--color-text-light);
+  text-align: center;
+}
+
+.error {
+  color: var(--color-danger);
+}

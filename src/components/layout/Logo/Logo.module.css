@@ -1,0 +1,12 @@
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.name {
+  font-size: var(--font-size-title);
+  font-weight: 700;
+  line-height: 1;
+  color: var(--color-text-logo);
+}

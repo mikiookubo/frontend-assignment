@@ -1,0 +1,73 @@
+.button {
+  /* 種類ごとに下の変数だけを差し替え、hover・pressed・disabled の色は計算で作る */
+  --button-color: var(--color-brand);
+  --button-fg: var(--color-white);
+
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0;
+  height: var(--control-height);
+  padding: 2px 4px 4px;
+  border: 2px solid transparent;
+  border-radius: var(--radius-sm);
+  background: var(--button-color);
+  color: var(--button-fg);
+  cursor: pointer;
+  transition: background-color 0.15s;
+}
+
+.label {
+  font-size: var(--font-size-minimum);
+  font-weight: 700;
+  line-height: 1;
+}
+
+.wide {
+  width: var(--actions-width);
+}
+
+.compact {
+  min-width: var(--control-height);
+}
+
+.primary:hover:not(:disabled) {
+  background: color-mix(in srgb, var(--button-color), black 20%);
+}
+
+.primary:active:not(:disabled) {
+  background: color-mix(in srgb, var(--button-color), black 35%);
+}
+
+.normal {
+  --button-color: var(--color-gray);
+}
+
+.normal:hover:not(:disabled) {
+  background: color-mix(in srgb, var(--button-color), black 15%);
+}
+
+.normal:active:not(:disabled) {
+  background: color-mix(in srgb, var(--button-color), black 30%);
+}
+
+.secondary {
+  --button-fg: var(--color-brand);
+
+  border-color: var(--color-brand);
+  background: var(--color-white);
+}
+
+.secondary:hover:not(:disabled) {
+  background: color-mix(in srgb, var(--color-gray), white 30%);
+}
+
+.secondary:active:not(:disabled) {
+  background: var(--color-gray);
+}
+
+.button:disabled {
+  cursor: not-allowed;
+  opacity: 0.35;
+}
