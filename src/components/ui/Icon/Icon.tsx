@@ -13,6 +13,7 @@ export type IconName = keyof typeof icons
 
 type Props = {
   name: IconName
+  /** 省略時は tokens.css の --icon-size（24px） */
   size?: number
 }
 
@@ -20,14 +21,14 @@ type Props = {
  * 配布された SVG を CSS の mask として使い、色は currentColor で塗る。
  * SVG 側の色は固定されているため、ボタンの種類ごとに色を変えられるようにしている。
  */
-export function Icon({ name, size = 24 }: Props) {
+export function Icon({ name, size }: Props) {
   return (
     <span
       className={styles.icon}
       style={
         {
           '--icon-url': `url("${icons[name]}")`,
-          '--icon-size': `${size}px`,
+          ...(size !== undefined && { '--icon-size': `${size}px` }),
         } as CSSProperties
       }
       aria-hidden="true"

@@ -5,6 +5,7 @@ import { StatusMessage } from './components/ui/StatusMessage/StatusMessage'
 import { ContentRoute } from './routes/ContentRoute'
 import { HomeRoute } from './routes/HomeRoute'
 import { RootRoute } from './routes/RootRoute'
+import { paths } from './lib/paths'
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -14,11 +15,11 @@ const queryClient = new QueryClient({
 
 const router = createBrowserRouter([
   {
-    path: '/',
+    path: paths.home,
     element: <RootRoute />,
     children: [
       { index: true, element: <HomeRoute /> },
-      { path: 'pages/:id', element: <ContentRoute /> },
+      { path: paths.pagePattern, element: <ContentRoute /> },
       {
         path: '*',
         element: <StatusMessage>ページが見つかりません</StatusMessage>,

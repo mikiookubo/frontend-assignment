@@ -41,6 +41,7 @@
   --actions-width: 90px;
   --control-height: 40px;
   --menu-item-height: 44px;
+  --icon-size: 24px;
 }
 
 /* メディアクエリでは CSS 変数を使えないため、ブレイクポイントは各ファイルで 768px に統一する */

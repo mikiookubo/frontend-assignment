@@ -1,0 +1,40 @@
+.item {
+  position: relative;
+}
+
+.link {
+  display: flex;
+  align-items: center;
+  height: var(--menu-item-height);
+  padding: 0 var(--space-xs);
+  border-radius: var(--radius-sm);
+  transition: background-color 0.15s;
+}
+
+.link:hover {
+  background: var(--color-bg-light);
+}
+
+.active {
+  background: var(--color-bg-light);
+  color: var(--color-brand-strong);
+  font-weight: 700;
+}
+
+/* 右端のゴミ箱とタイトルが重ならないよう、余白を空ける */
+.editing {
+  padding-right: calc(var(--space-xs) * 2 + var(--icon-size));
+}
+
+.title {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.deleteButton {
+  position: absolute;
+  top: 50%;
+  right: var(--space-xs);
+  translate: 0 -50%;
+}
