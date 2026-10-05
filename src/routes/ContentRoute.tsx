@@ -1,5 +1,6 @@
 import { useParams } from 'react-router'
 import { StatusMessage } from '../components/ui/StatusMessage/StatusMessage'
+import { ContentPage } from '../features/content/components/ContentPage/ContentPage'
 import { useContent } from '../features/content/hooks/useContent'
 
 export function ContentRoute() {
@@ -21,10 +22,6 @@ function ContentLoader({ id }: { id: number }) {
     )
   if (!content) return <StatusMessage>ページが見つかりません</StatusMessage>
 
-  return (
-    <article>
-      <h1>{content.title}</h1>
-      <p>{content.body}</p>
-    </article>
-  )
+  // key を付けて、ページを切り替えたときに編集中の状態を初期化する
+  return <ContentPage key={content.id} content={content} />
 }
