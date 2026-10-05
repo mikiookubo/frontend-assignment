@@ -1,10 +1,10 @@
 import { Outlet } from 'react-router'
 import { AppLayout } from '../components/layout/AppLayout/AppLayout'
-import { Logo } from '../components/layout/Logo/Logo'
+import { Sidebar } from '../features/content/components/Sidebar/Sidebar'
 
 export function RootRoute() {
   return (
-    <AppLayout sidebar={<Logo />}>
+    <AppLayout sidebar={<Sidebar />}>
       <Outlet />
     </AppLayout>
   )

@@ -1,6 +1,7 @@
 import { Navigate } from 'react-router'
 import { StatusMessage } from '../components/ui/StatusMessage/StatusMessage'
 import { useContents } from '../features/content/hooks/useContents'
+import { paths } from '../lib/paths'
 
 /** "/" を開いたときは、一覧の先頭のページに移動する */
 export function HomeRoute() {
@@ -22,5 +23,5 @@ export function HomeRoute() {
       </StatusMessage>
     )
 
-  return <Navigate to={`/pages/${first.id}`} replace />
+  return <Navigate to={paths.page(first.id)} replace />
 }
