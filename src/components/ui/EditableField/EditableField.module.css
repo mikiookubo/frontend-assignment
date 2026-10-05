@@ -1,0 +1,71 @@
+.field {
+  display: flex;
+  gap: var(--space-sm);
+}
+
+.content {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-width: 0;
+  min-height: 0;
+}
+
+.actions {
+  display: flex;
+  flex-shrink: 0;
+  justify-content: flex-end;
+  gap: var(--space-xs);
+  width: var(--actions-width);
+}
+
+.value,
+.input {
+  overflow-wrap: anywhere;
+  border: 1px solid transparent;
+  border-radius: var(--radius-md);
+}
+
+.input {
+  width: 100%;
+  border-color: var(--color-brand);
+  background: var(--color-white);
+}
+
+.input:focus-visible {
+  outline: none;
+}
+
+.error {
+  margin-top: 4px;
+  font-size: var(--font-size-caption);
+  color: var(--color-danger);
+}
+
+/* タイトル: 24px・行の高さ 40px の 1 行 */
+.title .value,
+.title .input {
+  padding: 0 var(--space-md);
+  font-size: var(--font-size-title);
+  font-weight: 700;
+  line-height: var(--control-height);
+  /* タイトルが空でも、高さを保つ */
+  min-height: var(--control-height);
+}
+
+/* 本文: 残りの高さいっぱいに広げ、長い文章はカードの中でスクロールさせる */
+.body {
+  flex: 1;
+  min-height: 0;
+}
+
+.body .value,
+.body .input {
+  flex: 1;
+  overflow-y: auto;
+  padding: var(--space-md);
+  background: var(--color-white);
+  line-height: 1.5;
+  white-space: pre-wrap;
+  resize: none;
+}
