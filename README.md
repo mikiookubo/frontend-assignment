@@ -1,32 +1,174 @@
-# React + TypeScript + Vite
+# recruit-frontend-app
 
-This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
+サイドバーでページを作成・削除し、メインエリアで各ページのタイトルと本文を編集・保存できます。
 
-Currently, two official plugins are available:
+React 19 と TypeScript で実装し、サーバーとの通信は TanStack Query、入力とレスポンスの検証は zod で行っています。
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## 目次
 
-## React Compiler
+- [起動手順](#起動手順)
+- [画面と操作](#画面と操作)
+- [追加した機能・仕様](#追加した機能仕様)
+- [設計](#設計)
+- [技術の選定理由](#技術の選定理由)
+- [テスト](#テスト)
+- [既知の制約・今後の改善](#既知の制約今後の改善)
+- [開発の進め方](#開発の進め方)
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## 起動手順
 
-## Expanding the Oxlint configuration
+### 動作環境
 
-If you are developing a production application, we recommend enabling type-aware lint rules by installing `oxlint-tsgolint` and editing `.oxlintrc.json`:
+- Node.js 22.23.3（`.nvmrc` に記載）
+- npm 10 以上
 
-```json
-{
-  "$schema": "./node_modules/oxlint/configuration_schema.json",
-  "plugins": ["react", "typescript", "oxc"],
-  "options": {
-    "typeAware": true
-  },
-  "rules": {
-    "react/rules-of-hooks": "error",
-    "react/only-export-components": ["warn", { "allowConstantExport": true }]
-  }
-}
+バックエンドも Node.js 22 以上が必要です。
+
+### 1. バックエンドを起動する
+
+課題で配布された [ncdcdev/recruit-frontend](https://github.com/ncdcdev/recruit-frontend) を起動します。
+
+```bash
+git clone https://github.com/ncdcdev/recruit-frontend.git
+cd recruit-frontend
+npm install
+npm run migration:run
+npm run build
+npm run start   # http://localhost:3000
 ```
 
-See the [Oxlint rules documentation](https://oxc.rs/docs/guide/usage/linter/rules) for the full list of rules and categories.
+データを初期状態に戻すときは、バックエンドのフォルダで `cp ./data/bk-dev.sqlite ./data/dev.sqlite` を実行します。
+
+### 2. フロントエンドを起動する
+
+```bash
+git clone https://github.com/mikiookubo/frontend-assignment.git
+cd frontend-assignment
+nvm use        # .nvmrc の Node.js に切り替える
+npm install
+npm run dev    # http://localhost:5173
+```
+
+### npm スクリプト
+
+| コマンド           | 内容                                   |
+| ------------------ | -------------------------------------- |
+| `npm run dev`      | 開発サーバーを起動する                 |
+| `npm run build`    | 型チェックをしてから本番用にビルドする |
+| `npm run preview`  | ビルド結果を確認する                   |
+| `npm run test`     | テストを監視モードで実行する           |
+| `npm run test:run` | テストを 1 回だけ実行する              |
+| `npm run lint`     | oxlint で静的解析する                  |
+| `npm run format`   | Prettier でコードを整形する            |
+
+## 画面と操作
+
+課題の要件と、それを満たす操作の対応です。
+
+| 要件                                      | 操作                                                                                                         |
+| ----------------------------------------- | ------------------------------------------------------------------------------------------------------------ |
+| 1. サイドバーに全ページを表示する         | サイドバーにページの一覧を表示します。ページ名を押すと、そのページを開きます                                 |
+| 2. 「+」ボタンでページを作成する          | サイドバー下部の Edit を押すと、New page（+）と Done が表示されます。New page で「新しいページ」を作成します |
+| 3. 「-」ボタンでページを削除する          | Edit を押すと、各ページの右にゴミ箱が表示されます。押すと確認ダイアログを出し、Delete で削除します           |
+| 4. タイトルと本文をそれぞれ編集・保存する | タイトルと本文の右にある Edit で編集を始め、Save で保存、Cancel で取り消します                               |
+
+入力の制約は課題のとおり、タイトルが 1〜50 文字、本文が 10〜2000 文字です。
+
+## 追加した機能・仕様
+
+課題で指定のない部分は、次のように決めました。
+
+| 内容                                                                         | 理由                                                                   |
+| ---------------------------------------------------------------------------- | ---------------------------------------------------------------------- |
+| ページごとに URL（`/pages/:id`）を持たせ、`/` を開くと先頭のページへ移動する | 再読み込みやブックマークで同じページを開けるようにするため             |
+| ページを作成したら、そのページへ移動する                                     | 作成したページをすぐ編集できるようにするため                           |
+| 表示中のページを削除したら、先頭のページへ移動する                           | 削除済みのページが表示されたままにならないようにするため               |
+| 削除の前に確認ダイアログを出す（Esc か Cancel で取り消せる）                 | 削除は取り消せない操作のため                                           |
+| 入力中にその場で検証し、エラーを表示する。不正な間は Save を押せない         | 保存を押してから失敗に気づく手間をなくすため                           |
+| 前後の空白を除いて文字数を数え、除いた値を保存する                           | 空白だけのタイトルや本文を保存できないようにするため                   |
+| 通信中は、作成・削除・保存のボタンを押せなくする                             | 二重に送信しないようにするため                                         |
+| 読み込み中、通信エラー、ページが見つからないときに案内を表示する             | 何も表示されない状態で利用者が迷わないようにするため                   |
+| タイトルが空のページは、サイドバーで「無題」と表示する                       | API ではタイトルが null や空文字になりうるため、一覧で選べるようにする |
+| 幅 768px 以下では、サイドバーを上、メインエリアを下に並べる                  | スマートフォンでも操作できるようにするため（レスポンシブ対応）         |
+
+## 設計
+
+### 方針
+
+- **サーバーの状態は TanStack Query のキャッシュだけで持つ。**
+  ページの一覧や内容を `useState` に複製せず、作成・削除・保存の後は一覧のキャッシュを無効化して取り直します。サイドバーとメインエリアで表示が食い違わないようにするためです。
+- **画面の状態は、使うコンポーネントの中に閉じる。**
+  「編集中かどうか」「入力中の値」は各コンポーネントの `useState` で持ち、グローバルな状態管理ライブラリは使っていません。
+- **外から来るデータは境界で検証する。**
+  API のレスポンスは `api/` で zod のスキーマに通し、想定外のデータを画面に流しません。
+- **変わりうる値は 1 か所で定義する。**
+  デザインの色・文字・余白は `styles/tokens.css`、URL は `lib/paths.ts`、キャッシュのキーは `queryKeys.ts`、入力の制約は `schema.ts` にまとめています。
+
+### フォルダ構成
+
+```
+src/
+├── api/                  # fetch の共通処理と、API ごとの関数（zod でレスポンスを検証）
+├── components/
+│   ├── layout/           # 画面の枠（AppLayout・Footer・Logo）
+│   └── ui/               # 機能に依存しない部品（Button・ConfirmDialog・EditableField など）
+├── features/
+│   └── content/          # ページ機能に関するものをまとめる
+│       ├── components/   # Sidebar・SidebarItem・ContentPage
+│       ├── hooks/        # TanStack Query の取得・作成・更新・削除
+│       ├── queryKeys.ts  # キャッシュのキー
+│       └── schema.ts     # タイトル・本文の入力の制約
+├── routes/               # URL ごとの画面（データの読み込みと、状態に応じた表示の切り替え）
+├── lib/                  # URL の組み立て
+├── styles/               # デザイントークンと全体のスタイル
+└── test/                 # テストの共通設定
+```
+
+`components/ui` はどの機能からも使える部品、`features/content` はページ機能だけで使うもの、と依存の向きを一方向にしています。
+各コンポーネントは、CSS とテストを同じフォルダに置いています。
+
+### データの流れ
+
+```
+api/content.ts（fetch + zod） → features/content/hooks（TanStack Query） → コンポーネント
+```
+
+コンポーネントは fetch や URL を直接扱わず、hooks だけを呼びます。
+
+### 共通化
+
+- **EditableField**：タイトルと本文で共通の「表示 ⇄ 編集」の部品です。1 行か複数行か、検証に使うスキーマ、保存処理を props で受け取ります。
+- **Button / IconButton**：デザインガイドラインのボタンを部品にしました。色の種類と大きさは props で切り替えます。
+- **ConfirmDialog**：ネイティブの `<dialog>` を使い、背景の操作の無効化、フォーカスの移動、Esc での取り消しをブラウザに任せています。
+- **StatusMessage**：読み込み中やエラーの案内を、どの画面でも同じ見た目で表示します。
+
+### バックエンドの挙動への対応
+
+バックエンドは、存在しない id のページを取得しても 200 と空のレスポンスを返します。
+`api/client.ts` で空のレスポンスを `null` として扱い、画面では「ページが見つかりません」と表示します。
+
+## 技術の選定理由
+
+| 技術                     | 用途                    | 選んだ理由                                                                                                 |
+| ------------------------ | ----------------------- | ---------------------------------------------------------------------------------------------------------- |
+| React 19 + TypeScript    | UI                      | 部品に分けて組み立てやすく、型で props や API のデータの食い違いを防げるため                               |
+| Vite                     | 開発サーバー・ビルド    | 起動と更新の反映が速く、API へのプロキシも設定だけで使えるため                                             |
+| React Router             | ルーティング            | ページごとに URL を持たせるため                                                                            |
+| TanStack Query           | サーバーの状態の管理    | 取得・キャッシュ・再取得・通信中やエラーの状態を任せられ、作成・削除・保存後の一覧の更新を簡潔に書けるため |
+| zod                      | 検証                    | 入力の制約と API のレスポンスの検証を同じ書き方で定義でき、型も自動で得られるため                          |
+| CSS Modules + CSS 変数   | スタイル                | 追加の依存なしでクラス名の衝突を防げ、デザイントークンを変数で共有できるため                               |
+| @fontsource/noto-sans-jp | フォント                | 指定の Noto Sans JP を外部の CDN に頼らず、npm パッケージとして読み込むため                                |
+| Vitest + Testing Library | テスト                  | Vite の設定をそのまま使え、利用者の操作に近い形で画面をテストできるため                                    |
+| msw                      | テスト用の API のモック | fetch を書き換えずに API の応答を差し替えられ、本番と同じ通信の流れでテストできるため                      |
+| oxlint + Prettier        | 静的解析・整形          | oxlint は高速で設定が少なく、Prettier で書式の議論をなくせるため                                           |
+
+## テスト
+
+```bash
+npm run test:run
+```
+
+## 開発の進め方
+
+機能ごとにブランチを切り、Pull Request でマージしました。
+各 PR の説明に、変更の目的と確認方法を書いています。設計・実装の中間文書として参照してください。
