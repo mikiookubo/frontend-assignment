@@ -21,3 +21,22 @@
   min-height: 0;
   padding: var(--space-md) var(--space-lg) 0;
 }
+
+/* 幅が狭いときは、サイドバーを上・メインエリアを下に積み、ページ全体をスクロールさせる */
+@media (max-width: 768px) {
+  .layout {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto 1fr;
+    height: auto;
+    min-height: 100dvh;
+  }
+
+  .sidebar {
+    border-right: none;
+    border-bottom: 1px solid var(--color-bg-sidebar-footer);
+  }
+
+  .main {
+    padding: var(--space-sm) var(--space-sm) 0;
+  }
+}

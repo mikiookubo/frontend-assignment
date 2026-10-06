@@ -31,3 +31,20 @@
 .footer > :last-child {
   margin-left: auto;
 }
+
+/* 上に積んだときにメインエリアを押し出さないよう、一覧の高さを抑える */
+@media (max-width: 768px) {
+  .header {
+    padding-left: var(--space-sm);
+  }
+
+  .nav {
+    flex: none;
+    max-height: 40dvh;
+    padding-left: var(--space-sm);
+  }
+
+  .footer {
+    padding-left: var(--space-sm);
+  }
+}
