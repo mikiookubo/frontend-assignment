@@ -69,3 +69,25 @@
   white-space: pre-wrap;
   resize: none;
 }
+
+/* 幅が狭いときは、ボタンを入力欄の下に置いて入力欄の幅を確保する */
+@media (max-width: 768px) {
+  .field {
+    flex-direction: column;
+    gap: var(--space-xs);
+  }
+
+  .actions {
+    width: auto;
+  }
+
+  .title .value,
+  .title .input {
+    padding: 0 var(--space-xs);
+  }
+
+  /* ページ全体がスクロールするため、本文の高さは画面の半分を確保する */
+  .body {
+    min-height: 50dvh;
+  }
+}
